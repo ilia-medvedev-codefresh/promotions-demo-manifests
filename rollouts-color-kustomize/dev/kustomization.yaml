@@ -1,0 +1,38 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../canary
+
+images:
+  - name: argoproj/rollouts-demo
+    newName: argoproj/rollouts-demo
+    newTag: blue
+
+patches:
+  - target:
+      group: networking.k8s.io
+      version: v1
+      kind: Ingress
+      name: canary-demo
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: ilia-rollouts-demo-dev.rnd-sandbox.cf-infra.com
+      - op: replace
+        path: /spec/ingressClassName
+        value: nginx-internal
+
+
+  - target:
+      group: argoproj.io
+      version: v1alpha1
+      kind: Rollout
+      name: canary-demo
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources
+        value:
+          requests:
+            memory: 128Mi
+            cpu: 100m
