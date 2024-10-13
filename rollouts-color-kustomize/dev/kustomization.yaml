@@ -5,7 +5,7 @@ resources:
 images:
   - name: argoproj/rollouts-demo
     newName: argoproj/rollouts-demo
-    newTag: green
+    newTag: yellow
 patches:
   - target:
       group: networking.k8s.io
